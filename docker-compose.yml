@@ -1,0 +1,35 @@
+version: "3"
+services:
+  src:
+    build:
+      context: .
+    container_name: src_container
+    command: "/bin/sh -c 'python manage.py migrate && python manage.py runserver 0.0.0.0:8000'"
+    ports:
+      - 8000:8000
+    environment:
+      DB_PASS: postgres
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_HOST: db
+      DEBUG: True
+
+      SECRET_KEY: secret
+      ALGORITHM: HS256
+    depends_on:
+      - db
+  db:
+    image: postgres
+    container_name: postgres_db
+    restart: always
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
